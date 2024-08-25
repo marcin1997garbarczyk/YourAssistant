@@ -8,8 +8,10 @@ from .forms import SignupForm, LoginForm
 # Create your views here.
 
 def home(request):
-    return render(request, 'home.html')
+    return render(request, 'myAssistants.html')
 
+def new_assistant(request):
+    return render(request, 'newAssistant.html')
 
 def user_register(request):
     if request.method == 'POST':
