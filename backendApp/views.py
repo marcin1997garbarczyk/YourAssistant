@@ -19,8 +19,14 @@ class create_new_assistant(APIView):
         if(serializer.is_valid()):
             try:
                 newAssistantObj = assistantService.createNewAssistant(serializer)
-                return Response({'storyId': newAssistantObj.pk}, status=status.HTTP_201_CREATED, content_type='application/json')
+                return Response({'assistantId': newAssistantObj.pk}, status=status.HTTP_201_CREATED, content_type='application/json')
             except(TypeError, ValueError, OverflowError, Assistant.DoesNotExist):
                 return Response({'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class get_my_assistants(APIView):
+    def get(self, request, format=None):
+        collectionOfStory = Assistant.objects.filter(ownerId = request.user.id).values()
+        return Response({'assistants': collectionOfStory},
+                        status=status.HTTP_200_OK, content_type='application/json')

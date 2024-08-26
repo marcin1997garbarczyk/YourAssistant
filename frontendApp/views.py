@@ -13,6 +13,10 @@ def home(request):
 def new_assistant(request):
     return render(request, 'newAssistant.html')
 
+def story(request, id):
+    return render(request, 'assistantPage.html')
+
+
 def user_register(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)

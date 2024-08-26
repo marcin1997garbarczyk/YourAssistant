@@ -1,4 +1,4 @@
-let storyId = 0;
+let assistantId = 0;
 
 
 
@@ -25,10 +25,10 @@ async function submitForm() {
         showLoader();
         let htmlObject = await callToApi();
         hideLoader();
-//        storyId = htmlObject.storyId;
+//        assistantId = htmlObject.assistantId;
 //        await getBalanceOfCurrentUser()
 //        hideLoader()
-//        window.location.href = `/story/${storyId}`
+//        window.location.href = `/story/${assistantId}`
 //    } else {
 //        $('#myModal').modal('toggle');
 //        $('#myModal').modal('show');
@@ -47,7 +47,7 @@ function hideLoader() {
 
 async function getMockForHttp() {
     let objToReturn = {
-        'storyId': 31
+        'assistantId': 31
     }
     await new Promise(r => setTimeout(r, 2000));
 
@@ -84,7 +84,7 @@ async function callToApi() {
     formElement.style.display = "none"
     let infoMessage = document.getElementById('infoAfterSave');
     let objToReturn = {
-        'storyId': apiCallParsedResponse.storyId
+        'assistantId': apiCallParsedResponse.assistantId
     }
     debugger
     return objToReturn;
