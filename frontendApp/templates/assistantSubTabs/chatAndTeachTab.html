@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %} OwnStory {% endblock %}
+{% load static %}
+
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static '/css/assistantPage.css' %}">
+  <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+    <div class="position-sticky">
+
+      <div class="list-group" id="myList" role="tablist">
+        <a class="list-group-item list-group-item-action " role="tab" onclick="customNavigateToBasicInformation('basicInfoTab')">Basic information</a>
+        <a class="list-group-item list-group-item-action" onclick="customNavigateToBasicInformation('knowledgeBaseTab')" role="tab">Knowledge base</a>
+        <a class="list-group-item list-group-item-action active"  onclick="customNavigateToBasicInformation('chatAndTeachTab')" role="tab">Chat and teach</a>
+        <a class="list-group-item list-group-item-action"  onclick="customNavigateToBasicInformation('testChatTab')" role="tab">Test chat</a>
+        <a class="list-group-item list-group-item-action"  onclick="customNavigateToBasicInformation('historyTab')" role="tab">History</a>
+      </div>
+    </div>
+  </nav>
+
+<br/>
+
+<p class="mb-0 titleStory" style="opacity: 0.8">Context - Assistant Marcin</p>
+<div class="tab-content">
+  <div class="card blindCard shadow p-3 mb-5 bg-white rounded">
+    <div class="card-body customCard">
+      <div class="historyBody">
+        <blockquote class="blockquote text-center">
+          <section>
+            <div class="container py-5">
+              <div class="row d-flex justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-6">
+                  <div class="card" id="chatToTeach">
+
+                    <div class="card-header d-flex justify-content-between align-items-center p-3">
+                      <h5 class="mb-0">Chat</h5>
+                    </div>
+
+                    <div class="card-body" data-mdb-perfect-scrollbar-init style="position: relative; height: 400px; overflow: auto">
+                      <div class="teachChatMessages">
+                      </div>
+                    </div>
+
+                    <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
+                      <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp"
+                        alt="avatar 3" style="width: 40px; height: 100%;">
+                      <input type="text" class="form-control form-control-lg" id="knowledgeChatInput"
+                        placeholder="Type message">
+                      <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
+                      <a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>
+                      <a class="ms-3" href="#!"><i class="fas fa-paper-plane"></i></a>
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </section>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+
+<script src="{% static '/assistantSubTabControllers/chatAndTeachTabController.js' %}"></script>
+
+{% endblock %}

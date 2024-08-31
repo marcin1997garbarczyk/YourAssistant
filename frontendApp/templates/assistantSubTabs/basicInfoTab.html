@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %} OwnStory {% endblock %}
+{% load static %}
+
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static '/css/assistantPage.css' %}">
+  <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+    <div class="position-sticky">
+
+      <div class="list-group" id="myList" role="tablist">
+        <a class="list-group-item list-group-item-action active" role="tab" onclick="customNavigateToBasicInformation('basicInfoTab')">Basic information</a>
+        <a class="list-group-item list-group-item-action" data-toggle="list" onclick="customNavigateToBasicInformation('knowledgeBaseTab')" role="tab">Knowledge base</a>
+        <a class="list-group-item list-group-item-action" data-toggle="list" onclick="customNavigateToBasicInformation('chatAndTeachTab')" role="tab">Chat and teach</a>
+        <a class="list-group-item list-group-item-action" data-toggle="list" onclick="customNavigateToBasicInformation('testChatTab')" role="tab">Test chat</a>
+        <a class="list-group-item list-group-item-action" data-toggle="list" onclick="customNavigateToBasicInformation('historyTab')" role="tab">History</a>
+      </div>
+    </div>
+  </nav>
+
+<br/>
+
+<p class="mb-0 titleStory" style="opacity: 0.8">Context - Assistant Marcin</p>
+<div class="tab-content">
+
+  <div class="tab-pane fade show active" id="basicInformationTab" role="tabpanel">
+      <div class="card blindCard shadow p-3 mb-5 bg-white rounded">
+        <div class="card-body customCard">
+          <div class="historyBody">
+            <blockquote class="blockquote text-center">
+              <p class="mb-0 titleStory" style="opacity: 0.8">Assistant Marcin</p>
+            </blockquote>
+          </div>
+        </div>
+      </div>
+  </div>
+  </div>
+</div>
+
+
+<script src="{% static '/assistantSubTabControllers/basicInfoTabController.js' %}"></script>
+
+{% endblock %}

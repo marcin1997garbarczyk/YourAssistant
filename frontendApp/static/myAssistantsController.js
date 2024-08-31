@@ -71,7 +71,7 @@ function buildBootstrapCard(assistant) {
 }
 
 function openassistant(event) {
-    window.location.href = `/assistant/${event.currentTarget.id}`
+    window.location.href = `/assistant/${event.currentTarget.id}/basicInfoTab`
 }
 
 function getCookie(name) {

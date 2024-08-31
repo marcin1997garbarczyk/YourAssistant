@@ -30,3 +30,12 @@ class get_my_assistants(APIView):
         collectionOfStory = Assistant.objects.filter(ownerId = request.user.id).values()
         return Response({'assistants': collectionOfStory},
                         status=status.HTTP_200_OK, content_type='application/json')
+
+
+
+class get_teach_messages(APIView):
+    def get(self, request, id, format=None):
+        # collectionOfStory = StoryMessage.objects.filter(storyId = id).values()
+        # mainStory = Story.objects.filter(id=id).values()
+        return Response({'storyMessages': '', 'mainStory': ''},
+                        status=status.HTTP_200_OK, content_type='application/json')

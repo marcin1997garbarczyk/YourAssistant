@@ -8,31 +8,18 @@ async function changeAssistantType() {
 }
 
 async function submitForm() {
-//    let currentBalance = await getBalanceOfCurrentUser()
-//    if (currentBalance > 0) {
         let buttonElement = document.getElementById('buttonToSubmit')
         buttonElement.style.display = 'none'
 
         let formClass = document.querySelector('.formClass')
 
-//        let historyClass = document.querySelector('.historyBody')
-//        formClass.classList.add('fade-out');
-//        setTimeout(() => {
-//            formClass.style.opacity = 0;
-//            historyClass.style.display = 'block';
-//            showLoader();
-//        }, 2000)
         showLoader();
         let htmlObject = await callToApi();
         hideLoader();
-//        assistantId = htmlObject.assistantId;
-//        await getBalanceOfCurrentUser()
-//        hideLoader()
-//        window.location.href = `/story/${assistantId}`
-//    } else {
-//        $('#myModal').modal('toggle');
-//        $('#myModal').modal('show');
-//    }
+        assistantId = htmlObject.assistantId;
+        setTimeout(() => {
+            window.location.href = `/assistant/${assistantId}`
+        },1000)
 }
 
 function showLoader() {
@@ -55,7 +42,6 @@ async function getMockForHttp() {
 }
 
 async function callToApi() {
-    debugger
     let storySummary = {
         language: $('#languageInput').val(),
         type: $('#assistantTypeInput').val(),
@@ -63,7 +49,6 @@ async function callToApi() {
         name: $('#nameOfAssistantInput').val(),
         mainGoals: $('#mainGoalInput').val(),
     }
-    debugger;
 
     let apiCallResponse = await fetch("/api/submit_assistant_form", {
         method: "POST",
@@ -76,17 +61,14 @@ async function callToApi() {
         },
     })
 
-    debugger;
     let apiCallParsedResponse = await apiCallResponse.json();
 
-    debugger;
     let formElement = document.querySelector('.formClass');
     formElement.style.display = "none"
     let infoMessage = document.getElementById('infoAfterSave');
     let objToReturn = {
         'assistantId': apiCallParsedResponse.assistantId
     }
-    debugger
     return objToReturn;
 }
 

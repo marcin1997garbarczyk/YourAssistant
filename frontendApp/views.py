@@ -13,8 +13,23 @@ def home(request):
 def new_assistant(request):
     return render(request, 'newAssistant.html')
 
-def story(request, id):
+def assistantPage(request, id):
     return render(request, 'assistantPage.html')
+
+def basicInfoTab(request, id):
+    return render(request, 'assistantSubTabs/basicInfoTab.html')
+
+def knowledgeBaseTab(request, id):
+    return render(request, 'assistantSubTabs/knowledgeBaseTab.html')
+
+def chatAndTeachTab(request, id):
+    return render(request, 'assistantSubTabs/chatAndTeachTab.html')
+
+def testChatTab(request, id):
+    return render(request, 'assistantSubTabs/testChatTab.html')
+
+def historyTab(request, id):
+    return render(request, 'assistantSubTabs/historyTab.html')
 
 
 def user_register(request):
