@@ -18,7 +18,7 @@ async function submitForm() {
         hideLoader();
         assistantId = htmlObject.assistantId;
         setTimeout(() => {
-            window.location.href = `/assistant/${assistantId}`
+            window.location.href = `/assistant/${assistantId}/basicInfoTab`
         },1000)
 }
 

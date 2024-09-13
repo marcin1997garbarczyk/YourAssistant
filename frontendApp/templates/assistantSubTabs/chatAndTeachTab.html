@@ -35,11 +35,22 @@
 
                     <div class="card-header d-flex justify-content-between align-items-center p-3">
                       <h5 class="mb-0">Chat</h5>
+                      <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-secondary" onclick="startNewChat()" style="margin: 1px">
+                          New
+                        </button>
+                        <button type="button" class="btn btn-secondary buttonToConvert"  onclick="convertChatToKnowledge()" style="margin: 1px">
+                          Convert
+                        </button>
+                      </div>
                     </div>
 
                     <div class="card-body" data-mdb-perfect-scrollbar-init style="position: relative; height: 400px; overflow: auto">
                       <div class="teachChatMessages">
                       </div>
+                        <div class="spinner-border loader" role="status" style="display: none">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
                     </div>
 
                     <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
@@ -47,6 +58,13 @@
                         alt="avatar 3" style="width: 40px; height: 100%;">
                       <input type="text" class="form-control form-control-lg" id="knowledgeChatInput"
                         placeholder="Type message">
+                      <button type="button" class="btn btn-primary buttonToSend" style="margin-left: 20px" onclick="sendMessage()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                          <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"></path>
+                        </svg>
+                      </button>
+
+
                       <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
                       <a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>
                       <a class="ms-3" href="#!"><i class="fas fa-paper-plane"></i></a>

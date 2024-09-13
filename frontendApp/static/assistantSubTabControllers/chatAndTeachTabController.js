@@ -1,9 +1,81 @@
 let url = window.location.pathname;
-let storyId = url.substring(url.lastIndexOf('/') + 1);;
+let urlWithoutBased = url.replace('/chatAndTeachTab','');
+let assistantId = urlWithoutBased.substring(urlWithoutBased.lastIndexOf('/') + 1);
 
 async function init() {
-    pushToChatMessages();
+    await initChatMessages();
 }
+
+async function initChatMessages() {
+    let chatBase = await getChatBase();
+    chatBase.messages.forEach(message => {
+        addMessageToChatOnHtml(message)
+    })
+}
+
+function addMessageToChatOnHtml(message) {
+    let chatMessagesClass = document.querySelector('.teachChatMessages')
+    let newHtmlBody = chatMessagesClass.innerHTML;
+    if(message.role == 'user') {
+        newHtmlBody += buildMessageFromUser(message.content)
+    } else if(message.role == 'assistant') {
+        newHtmlBody += buildMessageFromBot(message.content)
+    }
+    chatMessagesClass.innerHTML = newHtmlBody
+}
+
+async function sendMessage() {
+    showLoader()
+    let chatInput = document.querySelector('#knowledgeChatInput');
+    let message = {role: 'user', content: chatInput.value}
+    addMessageToChatOnHtml(message)
+    chatInput.value = '';
+    let askObject = {'assistantId': assistantId, 'answer': message.content}
+    let responseFromApi = await callToApiWithAnswer(askObject);
+    debugger
+    let answerMessage = {'role':'assistant','content':responseFromApi.message}
+    debugger
+    addMessageToChatOnHtml(answerMessage)
+    hideLoader()
+}
+
+async function startNewChat() {
+    showLoader()
+    await callToApiWithResetChat();
+    let chatMessagesClass = document.querySelector('.teachChatMessages')
+    chatMessagesClass.innerHTML = '';
+    await initChatMessages();
+    showButtons();
+    hideLoader()
+}
+
+async function convertChatToKnowledge() {
+    debugger
+    hideButtons()
+    showLoader()
+        let summary = await callToApiWithConvertToKnowledge();
+        debugger;
+        let textForHtml = `<b>Tytuł podsumowania </b>:<p> ${summary.title} </p> <br/><br/> <b>Treść podsumowania</b>: <p>${summary.content}</p>`
+        let chatMessagesClass = document.querySelector('.teachChatMessages')
+        chatMessagesClass.innerHTML = textForHtml;
+//        await initChatMessages();
+    hideLoader()
+}
+
+function hideButtons() {
+    let buttonToConvert = document.querySelector('.buttonToConvert')
+    let buttonToSend = document.querySelector('.buttonToSend')
+    buttonToConvert.style = 'display:none';
+    buttonToSend.style = 'display:none';
+}
+
+function showButtons() {
+    let buttonToConvert = document.querySelector('.buttonToConvert')
+    let buttonToSend = document.querySelector('.buttonToSend')
+    buttonToConvert.style = 'display:block';
+    buttonToSend.style = 'display:block';
+}
+
 
 function customNavigateToBasicInformation(name) {
     const currentUrl = window.location.href.replaceAll('/basicInfoTab','').
@@ -15,34 +87,29 @@ function customNavigateToBasicInformation(name) {
     window.location.href = newUrl;
 }
 
-function pushToChatMessages() {
-    let messages = [{role:'user', message:'hello'},{role:'robot', message:'hello'}];
-    let chatMessagesClass = document.querySelector('.teachChatMessages')
-    let newHtmlBody = '';
-    messages.forEach(message => {
-        if(message.role == 'user') {
-            newHtmlBody += `<div class="d-flex flex-row justify-content-start">
+function buildMessageFromUser(message) {
+    return `<div class="d-flex flex-row justify-content-start" style="margin:25px; padding:10px">
                             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp"
                               alt="avatar 1" style="width: 45px; height: 100%;">
                             <div>
-                              <p class="small p-2 ms-3 mb-1 rounded-3 bg-body-tertiary">${message.message}</p>
+                              <p class="small p-2 ms-3 mb-1 rounded-3 bg-body-tertiary">${message}</p>
                             </div>
-                          </div>`
-        } else if(message.role == 'robot') {
-            newHtmlBody += `<div class="d-flex flex-row justify-content-end mb-4 pt-1">
-                            <div>
-                              <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">${message.message}</p>
-                            </div>
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava4-bg.webp"
-                              alt="avatar 1" style="width: 45px; height: 100%;">
-                          </div>`
-        }
-    })
-    chatMessagesClass.innerHTML = newHtmlBody
+                          </div>`;
 }
 
-async function callToApi() {
-    let apiCallResponse = await fetch(`/api/get_teach_messages/${storyId}`, {
+
+function buildMessageFromBot(message) {
+    return `<div class="d-flex flex-row justify-content-end mb-4 pt-1" style="margin:25px; padding:10px">
+                            <div>
+                              <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">${message}</p>
+                            </div>
+                            <img src="/static/images/robotIcon.png"
+                              alt="avatar 1" style="width: 45px; height: 100%;">
+                          </div>`
+}
+
+async function getChatBase() {
+    let apiCallResponse = await fetch(`/api/get_teach_messages/${assistantId}`, {
         method: "GET",
         credentials: "same-origin",
         headers: {
@@ -52,17 +119,19 @@ async function callToApi() {
         },
     })
     let apiCallParsedResponse = await apiCallResponse.json();
+    return apiCallParsedResponse;
 }
 
 function showLoader() {
     let loader = document.querySelector('.loader')
     loader.classList.add('fade-out');
-    loader.style.setProperty('display', 'block', 'important')
+    loader.style.setProperty('display', 'inline-block', 'important')
     setTimeout(() => {
         loader.classList.remove('fade-out')
         loader.classList.add('fade-in-container');
     }, 1000)
 }
+
 
 function hideLoader() {
     let loader = document.querySelector('.loader')
@@ -70,8 +139,42 @@ function hideLoader() {
     loader.style.setProperty('display', 'none', 'important')
 }
 
-async function callToApiWithAnswer(askObject) {
+async function callToApiWithResetChat() {
 
+    let apiCallResponse = await fetch("/api/reset_chat", {
+        method: "POST",
+        body: JSON.stringify({'assistantId': assistantId}),
+        credentials: "same-origin",
+        headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            "Accept": "application/json",
+            'Content-Type': 'application/json'
+        },
+    })
+    let apiCallParsedResponse = await apiCallResponse.json();
+    return apiCallParsedResponse;
+}
+
+async function callToApiWithConvertToKnowledge() {
+
+    let apiCallResponse = await fetch("/api/convert_chat_to_knowledge", {
+        method: "POST",
+        body: JSON.stringify({'assistantId': assistantId}),
+        credentials: "same-origin",
+        headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            "Accept": "application/json",
+            'Content-Type': 'application/json'
+        },
+    })
+    let apiCallParsedResponse = await apiCallResponse.json();
+    debugger
+    return apiCallParsedResponse;
+}
+
+
+async function callToApiWithAnswer(askObject) {
+    debugger
     let apiCallResponse = await fetch("/api/submit_answer_from_user", {
         method: "POST",
         body: JSON.stringify(askObject),
@@ -85,6 +188,7 @@ async function callToApiWithAnswer(askObject) {
 
 
     let apiCallParsedResponse = await apiCallResponse.json();
+    debugger
     let objToReturn = {
         'message': apiCallParsedResponse.message,
         'storyId': apiCallParsedResponse.storyId
@@ -114,3 +218,14 @@ let alreadyInited = false;
 if (!alreadyInited) {
     alreadyInited = init();
 }
+
+
+const listener = event => {
+    if (event.code === "Enter" || event.code === "NumpadEnter") {
+        console.log("Enter key was pressed. Run your function.");
+        event.preventDefault();
+         sendMessage();
+    }
+};
+
+document.addEventListener("keydown", listener);

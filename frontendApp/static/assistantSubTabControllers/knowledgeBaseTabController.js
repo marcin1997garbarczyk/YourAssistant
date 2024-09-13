@@ -1,8 +1,9 @@
 let url = window.location.pathname;
-let storyId = url.substring(url.lastIndexOf('/') + 1);;
+let urlWithoutBased = url.replace('/knowledgeBaseTab','');
+let assistantId = urlWithoutBased.substring(urlWithoutBased.lastIndexOf('/') + 1);
 
 async function init() {
-    pushToChatMessages();
+    callToApiForKnowledgeBase();
 }
 
 function customNavigateToBasicInformation(name) {
@@ -15,34 +16,10 @@ function customNavigateToBasicInformation(name) {
     window.location.href = newUrl;
 }
 
-function pushToChatMessages() {
-    let messages = [{role:'user', message:'hello'},{role:'robot', message:'hello'}];
-    let chatMessagesClass = document.querySelector('.teachChatMessages')
-    let newHtmlBody = '';
-    messages.forEach(message => {
-        if(message.role == 'user') {
-            newHtmlBody += `<div class="d-flex flex-row justify-content-start">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp"
-                              alt="avatar 1" style="width: 45px; height: 100%;">
-                            <div>
-                              <p class="small p-2 ms-3 mb-1 rounded-3 bg-body-tertiary">${message.message}</p>
-                            </div>
-                          </div>`
-        } else if(message.role == 'robot') {
-            newHtmlBody += `<div class="d-flex flex-row justify-content-end mb-4 pt-1">
-                            <div>
-                              <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">${message.message}</p>
-                            </div>
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava4-bg.webp"
-                              alt="avatar 1" style="width: 45px; height: 100%;">
-                          </div>`
-        }
-    })
-    chatMessagesClass.innerHTML = newHtmlBody
-}
-
-async function callToApi() {
-    let apiCallResponse = await fetch(`/api/get_story_details/${storyId}`, {
+async function callToApiForKnowledgeBase() {
+    let assistantSummary = {}
+    debugger
+    let apiCallResponse = await fetch(`/api/get_knowledge_base/${assistantId}`, {
         method: "GET",
         credentials: "same-origin",
         headers: {
@@ -52,7 +29,33 @@ async function callToApi() {
         },
     })
     let apiCallParsedResponse = await apiCallResponse.json();
+    debugger
+    let assistants = apiCallParsedResponse.assistants;
+    let knowledgeInformations = apiCallParsedResponse.knowledgeInformations;
+
+    let knowledgeElement = document.querySelector('.knowledgeBaseInformations')
+    knowledgeInformations.forEach(knowledgeInfo => {
+        let knowledgeInfoCard = buildBootstrapCard(knowledgeInfo);
+        knowledgeElement.html += knowledgeInfoCard;
+        knowledgeElement.innerHTML += knowledgeInfoCard;
+        knowledgeElement.outerHtml += knowledgeInfoCard;
+    })
 }
+
+function buildBootstrapCard(knowledgeInfo) {
+
+    return `<div class="card shadow p-3 mb-5 bg-white rounded" style="margin:10px; width:31%;  min-width: 300px; max-height:300px; overflow: overlay; " >
+
+        <div class="card-body  " style='' >
+            <div class="cardText" style='min-height:150px'>
+            <h4 class="card-subtitle mb-2 text-muted" style="text-align: center"> ${knowledgeInfo.title}</h4>
+            </p>
+            <h6 class="card-subtitle mb-2 text-muted" style="text-align: center"> ${knowledgeInfo.content} </p>
+            </div>
+        </div>
+    </div>`
+}
+
 
 function showLoader() {
     let loader = document.querySelector('.loader')

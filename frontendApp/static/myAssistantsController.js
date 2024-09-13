@@ -30,7 +30,6 @@ async function callToApi() {
             'Content-Type': 'application/json'
         },
     })
-    debugger
     let apiCallParsedResponse = await apiCallResponse.json();
     let assistants = apiCallParsedResponse.assistants;
     let assistantsElement = document.querySelector('.myAssistants')
