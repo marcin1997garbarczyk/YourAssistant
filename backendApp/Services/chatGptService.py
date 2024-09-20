@@ -9,8 +9,7 @@ class ChatGptService:
         if(os.environ.get('CHAT_GPT_API_KEY') is not None):
             API_KEY_OPEN_AI = os.environ.get('CHAT_GPT_API_KEY')
         else:
-            API_KEY_OPEN_AI = 'x'
-            # config.CHAT_GPT_API_KEY
+            API_KEY_OPEN_AI = config.CHAT_GPT_API_KEY
 
         self.client = OpenAI(
             api_key=API_KEY_OPEN_AI
@@ -19,6 +18,11 @@ class ChatGptService:
 
     def askQuestionToChatGpt(self, assistantId, recognizedText, asTeach = True):
         assistant = Assistant.objects.get(id=assistantId)
+        knowledgeBaseInformations = KnowledgeBaseInformation.objects.filter(assistantId=assistantId)
+        for knowledgeInfo in knowledgeBaseInformations:
+            self.chatMessages.insert(0, {"role": 'user',
+                                         "content": f'Dodatkowa informacja o rozmówcy, które już masz to: {knowledgeInfo.content}'})
+
         if asTeach is True:
             self.chatMessages.insert(0, {"role": 'user', "content": f'Prowadź rozmowę jako asystent, który chce zebrać jak '
                                                                     f'najwięcej informacji aby później móc '
@@ -26,7 +30,9 @@ class ChatGptService:
                                                                     f'podstawie danych, które Ci wprowadzę, '
                                                                     f'tak abyś później mógł to wykorzystać '
                                                                     f'jako mój asystent przy następnych rozmowach. Twoim głównym celem '
-                                                                    f'jako asystenenta jest {assistant.mainGoals}'})
+                                                                    f'jako asystenenta jest {assistant.mainGoals}, więc wydobywaj '
+                                                                    f'jak najwięcej informacji, żeby w przyszłośći go realizować. '
+                                                                    f'Sposób w jaki będziesz traktować przyszłych rozmówców ma być {assistant.type}'})
 
         if asTeach is False:
             knowledgeBaseInformations = KnowledgeBaseInformation.objects.filter(assistantId=assistantId)
@@ -34,8 +40,6 @@ class ChatGptService:
             self.chatMessages.insert(0, {'role': 'user', 'content': f' Twój główny cel jako asystenta w tej rozmowie to {assistant.mainGoals}.'
                                                                     f' Sposób w jaki masz ze mną rozmawiać ma być {assistant.type} '
                                                                     f' A twoja płeć to {assistant.gender}'})
-            for knowledgeInfo in knowledgeBaseInformations:
-                self.chatMessages.insert(0, {"role": 'user', "content": f'Dodatkowa informacja o rozmówcy to: {knowledgeInfo.content}'})
 
         self.chatMessages.append({"role": 'user', "content": recognizedText})
         for message in self.chatMessages:
