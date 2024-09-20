@@ -13,6 +13,7 @@ class ChatMessage(models.Model):
     assistantId = models.CharField(max_length=200)
     role = models.CharField(max_length=200)
     content = models.CharField(max_length=500000)
+    context = models.CharField(max_length=200)
 
 class KnowledgeBaseInformation(models.Model):
     assistantId = models.CharField(max_length=200)

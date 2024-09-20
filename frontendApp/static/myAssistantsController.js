@@ -52,11 +52,9 @@ function buildBootstrapCard(assistant) {
     console.log(assistant.gender)
 
     return `<div class="card shadow p-3 mb-5 bg-white rounded" style="margin:10px; width:31%;  min-width: 300px; " >
-              <img class="bg_img"
-                src="/static/images/background_${assistant.type}.png"
-                alt=""
-              >
+
         <div class="card-body  " style='' >
+
             <div class="cardText" style='min-height:150px'>
             <h4 class="card-subtitle mb-2 text-muted" style="text-align: center">Assistant: ${assistant.name} ${getGenderIcon(assistant)}</h4>
             </p>

@@ -39,16 +39,38 @@ class get_my_assistants(APIView):
 
 
 
+class get_assistant_base_info(APIView):
+    def get(self, request, id, format=None):
+        assistant = Assistant.objects.filter(id=id).values()
+        print(assistant)
+
+        return Response({'assistant': assistant},
+                        status=status.HTTP_200_OK, content_type='application/json')
+
 class get_teach_messages(APIView):
     def get(self, request, id, format=None):
-        collectionOfMessages = ChatMessage.objects.filter(assistantId=id).values()
+        collectionOfMessages = ChatMessage.objects.filter(assistantId=id, context='teach').values()
         assistant = Assistant.objects.filter(id=id).values()
         print(collectionOfMessages)
         print(assistant)
 
         if not collectionOfMessages:
             messageService.createNewMessage('Cześć, czego dziś mnie nauczysz?', 'assistant', id)
-            collectionOfMessages = ChatMessage.objects.filter(assistantId=id).values()
+            collectionOfMessages = ChatMessage.objects.filter(assistantId=id, context='teach').values()
+
+        return Response({'messages': collectionOfMessages, 'assistant': assistant},
+                        status=status.HTTP_200_OK, content_type='application/json')
+
+class get_test_messages(APIView):
+    def get(self, request, id, format=None):
+        collectionOfMessages = ChatMessage.objects.filter(assistantId=id, context='test').values()
+        assistant = Assistant.objects.filter(id=id).values()
+        print(collectionOfMessages)
+        print(assistant)
+
+        if not collectionOfMessages:
+            messageService.createNewMessage('Cześć, o czym chcesz dzisiaj pogadać?', 'assistant', id, 'test')
+            collectionOfMessages = ChatMessage.objects.filter(assistantId=id, context='test').values()
 
         return Response({'messages': collectionOfMessages, 'assistant': assistant},
                         status=status.HTTP_200_OK, content_type='application/json')
@@ -71,7 +93,7 @@ class submit_answer_from_user(APIView):
 
         try:
             chatGptService.injectStoryOfTalkWithRobot(dataFromRequest.get('assistantId'))
-            answerFromChat = chatGptService.askQuestionToChatGpt(dataFromRequest.get('answer'))
+            answerFromChat = chatGptService.askQuestionToChatGpt(dataFromRequest.get('assistantId'), dataFromRequest.get('answer'))
             messageService.createNewMessage(dataFromRequest.get('answer'), 'user', dataFromRequest.get('assistantId'))
             messageService.createNewMessage(answerFromChat, 'assistant', dataFromRequest.get('assistantId'))
             print('Odpowiedz z chatu : '+answerFromChat)
@@ -81,11 +103,31 @@ class submit_answer_from_user(APIView):
             print('EXECPTION 1')
             return Response({'message': 'Error Exist'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class submit_answer_from_user_test(APIView):
+    def post(self, request, format=None):
+        dataFromRequest = request.data
+        print(f'data from request {dataFromRequest}')
+
+        try:
+            chatGptService.injectStoryOfTalkWithRobot(dataFromRequest.get('assistantId'), context='test')
+            answerFromChat = chatGptService.askQuestionToChatGpt(dataFromRequest.get('assistantId'), dataFromRequest.get('answer'), False)
+            messageService.createNewMessage(dataFromRequest.get('answer'), 'user', dataFromRequest.get('assistantId'), 'test')
+            messageService.createNewMessage(answerFromChat, 'assistant', dataFromRequest.get('assistantId'), 'test')
+            print('Odpowiedz z chatu : '+answerFromChat)
+            return Response({'message': answerFromChat, 'assistantId': dataFromRequest.get('assistantId')},
+                            status=status.HTTP_201_CREATED, content_type='application/json')
+        except(TypeError, ValueError, OverflowError):
+            print('EXECPTION 1')
+            return Response({'message': 'Error Exist'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 class reset_chat(APIView):
     def post(self, request, format=None):
         dataFromRequest = request.data
         print(f'data from request {dataFromRequest}')
-        ChatMessage.objects.filter(assistantId=dataFromRequest.get('assistantId')).delete()
+        ChatMessage.objects.filter(assistantId=dataFromRequest.get('assistantId'), context=dataFromRequest.get('context')).delete()
 
         try:
             return Response({'success': 'true', 'assistant': dataFromRequest.get('assistantId')},
@@ -105,7 +147,7 @@ class convert_chat_to_knowledge(APIView):
             print(f'responseFromChat {responseFromChat}')
             knowledgeSummary = knowledgeBaseService.convertChatSummaryToKnowledgeInfomration(dataFromRequest.get('assistantId'), responseFromChat)
             print(f'know summary {knowledgeSummary.content}')
-            ChatMessage.objects.filter(assistantId=dataFromRequest.get('assistantId')).delete()
+            ChatMessage.objects.filter(assistantId=dataFromRequest.get('assistantId'), context='teach').delete()
             return Response({'success': 'true', 'content': knowledgeSummary.content, 'title':knowledgeSummary.title, 'assistant': dataFromRequest.get('assistantId')},
                             status=status.HTTP_200_OK, content_type='application/json')
 

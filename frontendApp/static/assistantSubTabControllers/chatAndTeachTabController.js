@@ -40,8 +40,11 @@ async function sendMessage() {
 }
 
 async function startNewChat() {
+debugger
     showLoader()
+    debugger
     await callToApiWithResetChat();
+    debugger
     let chatMessagesClass = document.querySelector('.teachChatMessages')
     chatMessagesClass.innerHTML = '';
     await initChatMessages();
@@ -143,7 +146,7 @@ async function callToApiWithResetChat() {
 
     let apiCallResponse = await fetch("/api/reset_chat", {
         method: "POST",
-        body: JSON.stringify({'assistantId': assistantId}),
+        body: JSON.stringify({'assistantId': assistantId, 'context':'teach'}),
         credentials: "same-origin",
         headers: {
             "X-CSRFToken": getCookie("csrftoken"),

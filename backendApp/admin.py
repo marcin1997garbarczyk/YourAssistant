@@ -9,7 +9,7 @@ class AssistantAdmin(admin.ModelAdmin):
 
 @admin.register(ChatMessage)
 class ChatMessageAdmin(admin.ModelAdmin):
-    list_display = ['pk','role','content','assistantId']
+    list_display = ['pk','role','content','assistantId', 'context']
 
 @admin.register(KnowledgeBaseInformation)
 class KnowledgeBaseInformationAdmin(admin.ModelAdmin):

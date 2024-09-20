@@ -44,13 +44,13 @@ async function callToApiForKnowledgeBase() {
 
 function buildBootstrapCard(knowledgeInfo) {
 
-    return `<div class="card shadow p-3 mb-5 bg-white rounded" style="margin:10px; width:31%;  min-width: 300px; max-height:300px; overflow: overlay; " >
+    return `<div class="card shadow p-3 mb-5 bg-white rounded" style="height: 450px; margin:10px; width:40%;  min-width: 300px; max-height:400px; overflow: overlay; " >
 
-        <div class="card-body  " style='' >
-            <div class="cardText" style='min-height:150px'>
-            <h4 class="card-subtitle mb-2 text-muted" style="text-align: center"> ${knowledgeInfo.title}</h4>
-            </p>
-            <h6 class="card-subtitle mb-2 text-muted" style="text-align: center"> ${knowledgeInfo.content} </p>
+        <div class="card-body  " style='height:350px' >
+            <div class="cardText" style='min-height:300px'>
+                <h4 class="card-subtitle mb-2 text-muted" style="text-align: center; height:150px"> ${knowledgeInfo.title}</h4>
+                </p>
+                <h6 class="card-subtitle mb-2 text-muted" style="text-align: center"> ${knowledgeInfo.content.replaceAll('**','<b>')} </p>
             </div>
         </div>
     </div>`
